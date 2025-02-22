@@ -17,11 +17,31 @@ animations = []
 items = []
 
 def draw():
+    global items,game_over,game_complete,current_level
     screen.clear()
     screen.blit("bg",(0,0))
+    if game_over:
+        display_message("YOU LOST!","Try again next time.")#
+    elif game_complete:
+        display_message("YOU WON!","Good job!")
+    else:
+        for item in items:
+            item.draw()
 
 def update():
-    pass
+    global items
+    if len(items) == 0:
+        items = make_items(current_level)
+
+
+def make_items(extra_items):
+    items_to_create = get_option(extra_items)
+    new_items = create_items(items_to_create)
+    layout_items(new_items)
+    animate_items(new_items)
+    return new_items
+    
+
 
 def get_option(extra_items):
     items_to_create = ["paper"]
@@ -49,7 +69,7 @@ def animate_items(items_to_animate):
     global animations
     for item in items_to_animate:
         duration = START_SPEED - current_level
-        item.anchor("center","bottom")
+        item.anchor = ("center","bottom")
         animation = animate(item,duration=duration,on_finished=handle_game_over,y = HEIGHT)
         animations.append(animation)
     
@@ -81,5 +101,8 @@ def stop_animations(animations_to_stop):
         if animation.running:
             animation.stop()
 
+def display_message(main_text,sub_text):
+    screen.draw.text(main_text,fontsize = 60,color = "Black",center = CENTER)
+    screen.draw.text(sub_text,fontsize = 30, color = "Black",center = (CENTER_X,CENTER_Y + 40))
 
 pgzrun.go()
